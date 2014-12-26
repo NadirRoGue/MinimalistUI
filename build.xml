@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MinimalistUI" default="jar" basedir=".">
+	<description>
+		Minimal UI Engine. Contains minimal UI components, as well as
+		a control and UI effect engine, used to create modern visual
+		effects.
+	</description>
+	<property name="src" location="src" />
+	<property name="fonts" location="fonts" />
+	<property name="build" location="build" />
+	<property name="build.classes" location="${build}/classes" />
+	<property name="build.fonts" location="${build}/fonts" />
+	<property name="build.dist" location="${build}/dist" />
+	
+	<target name="init" depends="clean,checkRequirements"
+		description="Create the output directories.">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.fonts}" />
+	</target>
+	<target name="compile" depends="init" description="Compile the source.">
+		<javac srcdir="${src}" destdir="${build.classes}" compiler="javac1.7"
+			createMissingPackageInfoClass="false" debug="false"
+			includeantruntime="false" source="1.7" target="1.7" />
+		<copy todir="${build.fonts}">
+			<fileset dir="${fonts}"/>
+		</copy>
+	</target>
+	<target name="jar" depends="compile" description="Create the jar file">
+		<jar destfile="${build.dist}/MinimalistUI.jar" level="9">
+			<fileset dir="${build.classes}" />
+			<fileset dir="${build.fonts}" />
+			<manifest>
+				<attribute name="Built-By" value="Nadir Román Guerrero" />
+				<attribute name="Built-Date" value="${build.tstamp}" />
+				<attribute name="Implementation-URL" value="https://github.com/BiggBoss" />
+				<attribute name="Implementation-Version" value="1.0" />
+			</manifest>
+		</jar>
+	</target>
+	<target name="clean" description="Remove the output directories.">
+		<delete dir="${build}" />
+	</target>
+	<target name="checkRequirements" description="Check Requirements">
+		<fail
+			message="Ant 1.8.3 is required. But your version is ${ant.version} and if you are using Eclipse probably is outdated.">
+			<condition>
+				<not>
+					<antversion atleast="1.8.3" />
+				</not>
+			</condition>
+		</fail>
+		<available classname="java.lang.AutoCloseable" property="JDK7.present" />
+		<fail unless="JDK7.present"
+			message="Java 1.7 is required. But your version is Java ${ant.java.version} and probably JDK is not installed." />
+	</target>
+</project>
